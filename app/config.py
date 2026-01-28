@@ -13,8 +13,7 @@ aiohttp_logger.setLevel(logging.DEBUG)
 load_dotenv()
 
 API_TOKEN = os.getenv('API_TOKEN')
-CURRENCY_API_KEY = os.getenv("API_KEY")
 CURRENCY_API_URL = "https://api.apilayer.com/exchangerates_data/latest"
 
-if not API_TOKEN or not CURRENCY_API_KEY:
+if not API_TOKEN:
     raise NameError
