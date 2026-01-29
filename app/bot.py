@@ -3,12 +3,15 @@ import requests
 import json
 import os
 from aiogram import Bot, Dispatcher
+from aiogram.types import BufferedInputFile 
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from config import API_TOKEN
 from dataclasses import dataclass
+import matplotlib.pyplot as plt
+import io
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
@@ -294,6 +297,27 @@ async def progress_tracker(message: Message, state: FSMContext):
         - Потреблено: {profile.calories_in_food} ккал из {profile.total_calories} ккал.
         - Сожжено: {profile.calories_burned} ккал.
         - Баланс: {balance} ккал.""")
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+    ax1.pie([profile.drunk_water, remained], 
+            labels=['Выпито', 'Осталось'], 
+            colors=['#66b3ff', '#e0e0e0'], 
+            autopct='%1.1f%%')
+    ax1.set_title(f'Вода: {profile.drunk_water}/{profile.base_water} мл')
+
+    ax2.pie([profile.calories_in_food, profile.total_calories], 
+        labels=['Потреблено', 'Норма калорий'], 
+        colors=['#66b3ff', '#e0e0e0'], 
+        autopct='%1.1f%%')
+    ax2.set_title(f'Калории: {profile.calories_in_food}/{profile.total_calories} ккал')
+    buf = io.BytesIO()
+    plt.tight_layout()
+    plt.savefig(buf, format='png', dpi=80)
+    buf.seek(0)
+    plt.close()
+    photo = BufferedInputFile(buf.read(), filename="progress.png")
+    await message.answer_photo(
+        photo=photo
+    )
 
 async def main():
     try:
