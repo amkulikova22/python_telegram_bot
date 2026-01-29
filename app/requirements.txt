@@ -3,3 +3,5 @@ aiohttp==3.11.11
 aiohappyeyeballs==2.4.4
 python-dotenv
 requests
+matplotlib==3.7.1
+numpy==1.24.3
